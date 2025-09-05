@@ -1,26 +1,39 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function ShowSchools() {
   const [schools, setSchools] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/getSchools")
-      .then(res => res.json())
-      .then(data => {
-        setSchools(data);
+    const fetchSchools = async () => {
+      try {
+        const res = await fetch("/api/getSchools");
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+          setSchools(data);
+        } else if (Array.isArray(data.data)) {
+          setSchools(data.data);
+        } else {
+          console.error("Unexpected API response:", data);
+          setSchools([]);
+        }
+      } catch (err) {
+        console.error("Error fetching schools:", err);
+        setSchools([]);
+      } finally {
         setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchSchools();
   }, []);
 
   if (loading) return <p className="text-center mt-10">Loading schools...</p>;
 
   return (
-    <div className="max-w-6xl mx-auto p-8">
+    <div className="max-w-6xl mx-auto p-8 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 shadow-lg rounded-2xl mt-10">
       {/* Header */}
       <h1 className="text-4xl font-extrabold mb-10 text-center bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-transparent bg-clip-text">
         All Schools
@@ -62,7 +75,16 @@ export default function ShowSchools() {
           </div>
         ))}
       </div>
-    </div>
 
+      {/* Add School Button */}
+      <div className="mt-8 flex justify-center">
+        <Link
+          href="/addSchool"
+          className="inline-block bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-white font-bold px-8 py-3 rounded-lg shadow-md hover:from-red-400 hover:via-orange-400 hover:to-yellow-400 transition duration-300 text-center"
+        >
+          ➕ Add School
+        </Link>
+      </div>
+    </div>
   );
 }

@@ -34,9 +34,6 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "Image file missing or invalid" });
       }
 
-      // if (!imageFile) {
-      //   return res.status(400).json({ error: "No image uploaded"})
-      // }
       const imagePath = "/schoolImages/" + path.basename(imageFile.filepath);
 
       try {
