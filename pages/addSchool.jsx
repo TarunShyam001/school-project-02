@@ -7,32 +7,34 @@ export default function AddSchool() {
   const [message, setMessage] = useState("");
 
   const onSubmit = async (data) => {
-    const formData = new FormData();
+  const formData = new FormData();
 
-    // Append normal fields
-    for (let key in data) {
-      if (key !== "image") {
-        formData.append(key, data[key]);
-      }
+  // Append normal fields
+  for (let key in data) {
+    if (key !== "image") {
+      formData.append(key, data[key]);
     }
+  }
 
-    // Append the actual file (first file from FileList)
-    if (data.image && data.image[0]) {
-      formData.append("image", data.image[0]);
-    }
+  // Append the actual file (first file from FileList)
+  if (data.image && data.image[0]) {
+    formData.append("image", data.image[0]);
+  }
 
-    const res = await fetch("/api/addSchool", {
-      method: "POST",
-      body: formData,
-    });
-    const result = await res.json();
-    setMessage(result.message || result.error);
+  const res = await fetch("/api/addSchool", {
+    method: "POST",
+    body: formData,
+  });
 
-    // ✅ Clear the form only if submission was successful
-    if (res.ok) {
-      reset();
-    }
-  };
+  const result = await res.json();
+  setMessage(result.message || result.error);
+
+  // ✅ Clear the form only if submission was successful
+  if (res.ok) {
+    reset();
+  }
+};
+
 
   return (
     <div className="max-w-md mx-auto p-6 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 shadow-lg rounded-2xl mt-10">
